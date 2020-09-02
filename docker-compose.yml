@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+    build_cms:
+        build: .
+        image: php_server_dev
+        container_name: php_server_dev
+        restart: unless-stopped
+        volumes:
+            - ./www:/var/www/html
+        ports: 
+            - 80:80
+        depends_on: 
+            - php_dev_database
+    php_dev_database:
+        image: mysql:8.0.21
+        container_name: php_dev_database
+        restart: unless-stopped
+        volumes: 
+            - ./mysql:/var/lib/mysql
+        ports: 
+            - 3306:3306
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+    phpmyadmin:
+        image: phpmyadmin/phpmyadmin:5.0.2
+        container_name: phpmyadmin
+        restart: unless-stopped
+        environment: 
+            PMA_HOST: php_dev_database
+            PMA_USER: root
+            PMA_PASSWORD: root
+        ports:
+            - 81:80
+        depends_on: 
+            - php_dev_database
